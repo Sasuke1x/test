@@ -1,9 +1,9 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import Image from 'next/image'
 import { FiX } from 'react-icons/fi'
 import { galleryCategories, interactiveGalleryImages, type GalleryCategory } from '@/data/enhancements'
+import { getAssetPath } from '@/lib/utils'
 
 const allCategory = 'All Projects'
 
@@ -59,7 +59,11 @@ const InteractiveGalleryGrid = () => {
             onClick={() => setSelectedImage(image.src)}
             className="group relative h-64 rounded-2xl overflow-hidden shadow-sm text-left"
           >
-            <Image src={image.src} alt={image.alt} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+            <img 
+              src={getAssetPath(image.src)} 
+              alt={image.alt} 
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+            />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/85 to-transparent p-4">
               <p className="text-white text-sm font-semibold">{image.category}</p>
               <p className="text-slate-200 text-xs mt-1">{image.location}</p>
@@ -80,7 +84,7 @@ const InteractiveGalleryGrid = () => {
           </button>
           <div className="h-full w-full flex items-center justify-center">
             <div className="relative w-full max-w-5xl aspect-[16/10] rounded-xl overflow-hidden">
-              <Image src={selectedImage} alt="Gallery preview" fill className="object-contain" />
+              <img src={getAssetPath(selectedImage)} alt="Gallery preview" className="w-full h-full object-contain" />
             </div>
           </div>
         </div>

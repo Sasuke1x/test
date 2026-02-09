@@ -5,7 +5,7 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'export',
   basePath: isProd ? '/test' : '',
-  assetPrefix: isProd ? '/test' : '',
+  assetPrefix: isProd ? '/test/' : '',
   trailingSlash: true,
   images: {
     remotePatterns: [
@@ -26,6 +26,8 @@ const nextConfig = {
       },
     ],
     unoptimized: true,
+    loader: 'custom',
+    loaderFile: './src/lib/imageLoader.ts',
   },
 }
 
