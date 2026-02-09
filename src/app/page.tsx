@@ -9,11 +9,35 @@ import ServiceAreaPanel from '@/components/ServiceAreaPanel'
 import TestimonialsSection from '@/components/TestimonialsSection'
 import TrustBadges from '@/components/TrustBadges'
 import { interactiveGalleryImages } from '@/data/enhancements'
-import { serviceCategories, siteInfo } from '@/data/siteData'
+import { homepageSeo, serviceCategories, siteInfo } from '@/data/siteData'
 
 export const metadata: Metadata = {
-  title: 'Roofing, Remodeling & Restoration in Glen Burnie, MD',
-  description: 'House Transformers Inc. delivers roofing, remodeling, and emergency restoration for residential and commercial clients throughout Glen Burnie and surrounding Maryland communities.',
+  title: homepageSeo.title,
+  description: homepageSeo.description,
+  keywords: [...homepageSeo.keywords],
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: homepageSeo.title,
+    description: homepageSeo.description,
+    url: '/',
+    type: 'website',
+    images: [
+      {
+        url: '/brand/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'General contractor and home remodeling services in Glen Burnie, MD',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: homepageSeo.title,
+    description: homepageSeo.description,
+    images: ['/brand/og-image.jpg'],
+  },
 }
 
 const HomePage = () => {
@@ -55,10 +79,10 @@ const HomePage = () => {
             <div>
               <p className="text-sm font-semibold text-brand-300 uppercase tracking-widest">Glen Burnie, MD</p>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mt-3">
-                Roofing, Remodeling & Restoration You Can Trust
+                Licensed General Contractor for Roofing, Remodeling, and Home Improvement
               </h1>
               <p className="text-lg md:text-xl text-slate-200 mt-4">
-                House Transformers Inc. delivers responsive emergency service, high-quality craftsmanship, and insurance-ready documentation for residential and commercial projects.
+                House Transformers Inc. provides home remodeling, kitchen remodeling, bathroom remodel, roofing, window replacement, siding, gutter, and deck building services in Glen Burnie, MD and Anne Arundel County.
               </p>
               <div className="flex flex-wrap items-center gap-4 mt-8">
                 <a href={`tel:${siteInfo.phoneDigits}`} className="btn-primary">
@@ -79,6 +103,15 @@ const HomePage = () => {
             </div>
             <LeadForm variant="dark" />
           </div>
+        </div>
+      </section>
+
+      <section className="py-10 bg-slate-50 border-y border-slate-200">
+        <div className="container-custom">
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-900">Home Improvement Contractors in Glen Burnie, MD</h2>
+          <p className="text-slate-700 mt-3 max-w-4xl">
+            If you are looking for remodeling contractors near you, roofing companies near you, or licensed home services in Glen Burnie, our team delivers residential and commercial project management from inspection through completion.
+          </p>
         </div>
       </section>
 

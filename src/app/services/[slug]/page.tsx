@@ -2,11 +2,12 @@ import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import Script from 'next/script'
 import { FiAlertTriangle, FiCheckCircle, FiPhone } from 'react-icons/fi'
 import CTASection from '@/components/CTASection'
 import LeadForm from '@/components/LeadForm'
 import { interactiveGalleryImages, serviceLegacyContent, type ServiceSlug } from '@/data/enhancements'
-import { processSteps, serviceCategories, serviceDetails, siteInfo } from '@/data/siteData'
+import { processSteps, serviceCategories, serviceDetails, serviceFaqs, serviceSeoProfiles, siteInfo } from '@/data/siteData'
 
 interface PageProps {
   params: { slug: string }
@@ -20,9 +21,38 @@ export const generateMetadata = ({ params }: PageProps): Metadata => {
   if (!service) {
     return { title: 'Service Not Found' }
   }
+  const seoProfile = serviceSeoProfiles[service.slug]
+  const title = seoProfile?.title ?? `${service.title} in Glen Burnie, MD`
+  const description = seoProfile?.description ?? service.description
+  const keywords = seoProfile?.keywords ? [...seoProfile.keywords] : [service.title, 'Glen Burnie MD']
+
   return {
-    title: service.title,
-    description: service.description,
+    title,
+    description,
+    keywords,
+    alternates: {
+      canonical: `/services/${service.slug}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `/services/${service.slug}`,
+      type: 'article',
+      images: [
+        {
+          url: service.image,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [service.image],
+    },
   }
 }
 
@@ -39,9 +69,61 @@ const ServiceDetailPage = ({ params }: PageProps) => {
   const heroImage = interactiveGalleryImages.find((image) => image.serviceSlugs.includes(serviceSlug))?.src ?? service.image
   const gallery = interactiveGalleryImages.filter((image) => image.serviceSlugs.includes(serviceSlug)).slice(0, 6)
   const projectGallery = gallery.length > 0 ? gallery : interactiveGalleryImages.slice(0, 6)
+  const seoProfile = serviceSeoProfiles[service.slug]
+  const faqItems = serviceFaqs[service.slug] ?? []
+
+  const serviceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: seoProfile?.title ?? `${service.title} Services`,
+    serviceType: service.title,
+    areaServed: ['Glen Burnie, MD', 'Anne Arundel County, MD', 'Maryland'],
+    provider: {
+      '@type': 'LocalBusiness',
+      name: siteInfo.name,
+      telephone: siteInfo.phoneDigits,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: '7442 Baltimore Annapolis Blvd Suite 201',
+        addressLocality: 'Glen Burnie',
+        addressRegion: 'MD',
+        postalCode: '21061',
+        addressCountry: 'US',
+      },
+    },
+    url: `https://housetransformersinc.com/services/${service.slug}`,
+    description: seoProfile?.description ?? service.description,
+  }
+
+  const faqSchema = faqItems.length > 0
+    ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqItems.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer,
+        },
+      })),
+    }
+    : null
 
   return (
     <>
+      <Script
+        id={`schema-service-${service.slug}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      {faqSchema && (
+        <Script
+          id={`schema-faq-${service.slug}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
       <section className="relative bg-slate-900 text-white py-20 overflow-hidden">
         <div className="absolute inset-0">
           <Image src={heroImage} alt={service.title} fill className="object-cover opacity-55" />
@@ -59,15 +141,40 @@ const ServiceDetailPage = ({ params }: PageProps) => {
         </div>
         <div className="container-custom relative z-10">
           <p className="text-sm font-semibold text-brand-300 uppercase tracking-widest">Service</p>
-          <h1 className="text-4xl md:text-5xl font-bold mt-4">{service.title}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mt-4">{seoProfile?.headline ?? service.title}</h1>
           <p className="text-lg text-slate-200 mt-4 max-w-2xl">{detail.hero}</p>
+          {seoProfile?.intro && (
+            <p className="text-base text-slate-200/90 mt-3 max-w-3xl">{seoProfile.intro}</p>
+          )}
           <div className="mt-6 flex flex-wrap gap-4">
             <a href={`tel:${siteInfo.phoneDigits}`} className="btn-primary">
-              <FiPhone className="mr-2" /> Call {siteInfo.phone}
+              <FiPhone className="mr-2" /> Call for Same-Day Service
             </a>
             <Link href="/contact" className="btn-secondary bg-transparent border-white text-white hover:bg-white hover:text-slate-900">
-              Request an Estimate
+              Get Free Estimate
             </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-8 bg-white border-b border-slate-200">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-6 items-center bg-slate-50 border border-slate-200 rounded-2xl p-6">
+            <div>
+              <p className="text-sm font-semibold text-brand-700 uppercase tracking-wide">Fast Project Starts</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mt-2">Book your inspection and quote now</h2>
+              <p className="text-slate-600 mt-2">
+                Licensed crews, clear pricing, and financing options for qualified projects in Glen Burnie and Anne Arundel County.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-end">
+              <a href={`tel:${siteInfo.phoneDigits}`} className="btn-primary w-full sm:w-auto lg:w-full">
+                <FiPhone className="mr-2" /> Call {siteInfo.phone}
+              </a>
+              <Link href="/contact" className="btn-outline w-full sm:w-auto lg:w-full text-center">
+                Request Detailed Quote
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -199,6 +306,27 @@ const ServiceDetailPage = ({ params }: PageProps) => {
           </div>
         </div>
       </section>
+
+      {faqItems.length > 0 && (
+        <section className="py-16 bg-slate-50">
+          <div className="container-custom">
+            <div className="max-w-3xl mb-8">
+              <p className="text-sm font-semibold text-brand-600 uppercase tracking-wide">Service FAQs</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Questions about {service.title}</h2>
+            </div>
+            <div className="max-w-4xl space-y-4">
+              {faqItems.map((faq) => (
+                <details key={faq.question} className="bg-white border border-slate-200 rounded-xl px-6 py-5 shadow-sm group">
+                  <summary className="cursor-pointer text-lg font-semibold text-slate-900 marker:text-brand-600">
+                    {faq.question}
+                  </summary>
+                  <p className="text-slate-600 mt-3">{faq.answer}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <CTASection />
     </>

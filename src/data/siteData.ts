@@ -99,6 +99,280 @@ export const serviceCategories = [
   },
 ]
 
+export type ServiceCategory = (typeof serviceCategories)[number]
+export type ServiceCategorySlug = ServiceCategory['slug']
+
+export const homepageSeo = {
+  title: 'General Contractor in Glen Burnie, MD | Home Remodeling & Roofing Services',
+  description:
+    'House Transformers Inc. is a licensed general contractor in Glen Burnie, MD delivering home remodeling, kitchen and bath renovation, roofing, windows, siding, gutters, decks, patios, and emergency home services.',
+  keywords: [
+    'general contractor',
+    'home remodeling',
+    'remodeling contractors',
+    'bathroom remodel',
+    'kitchen remodeling',
+    'home improvement contractors',
+    'home improvement services',
+    'roofing companies near me',
+    'window replacement',
+    'siding contractors near me',
+    'deck builders near me',
+    'remodeling contractors near me',
+    'general contractor Glen Burnie MD',
+    'home remodeling Glen Burnie MD',
+    'roofing contractor Glen Burnie MD',
+    'window replacement Glen Burnie MD',
+    'siding contractor Glen Burnie MD',
+    'deck builder Glen Burnie MD',
+    'licensed home services Glen Burnie MD',
+    'roofing and home services Glen Burnie',
+    'contractor Anne Arundel County MD',
+    'house renovation Glen Burnie MD',
+  ],
+} as const
+
+type ServiceSeoProfile = {
+  title: string
+  description: string
+  headline: string
+  intro: string
+  keywords: readonly string[]
+}
+
+export const serviceSeoProfiles: Partial<Record<ServiceCategorySlug, ServiceSeoProfile>> = {
+  roofing: {
+    title: 'Roofing Company in Glen Burnie, MD | Roof Repair & Roof Replacement',
+    description:
+      'Trusted roofing company in Glen Burnie, MD for roof repair, roof replacement, roofing installation, emergency roof repair, and residential and commercial roofing services.',
+    headline: 'Roofing Company for Roof Repair, Roof Replacement, and Installation',
+    intro:
+      'Our roofing contractors complete inspections, leak repair, full replacements, and storm damage restoration for residential and commercial properties across Glen Burnie and Anne Arundel County.',
+    keywords: [
+      'roofing companies',
+      'roofing companies near me',
+      'roofing contractors',
+      'roofing contractors near me',
+      'roofing installation',
+      'roofing services',
+      'affordable roofing',
+      'roofing repair company near me',
+      'emergency roof repair',
+      'roof leak repair',
+      'residential roofing',
+      'commercial roof repair',
+      'commercial roofing contractor',
+      'roof repair',
+      'roof replacement',
+      'roofers near me',
+      'roofing Glen Burnie MD',
+      'roof repair Glen Burnie MD',
+      'roof replacement Glen Burnie MD',
+      'roofing contractor Anne Arundel County MD',
+      'roof inspection Glen Burnie MD',
+      'roof installation near me',
+    ],
+  },
+  windows: {
+    title: 'Window Replacement in Glen Burnie, MD | Window Installation Contractors',
+    description:
+      'Professional window replacement and window installation in Glen Burnie, MD. Work with experienced window contractors for replacement windows, vinyl windows, and energy-efficient upgrades.',
+    headline: 'Window Replacement and Installation Services for Homes and Businesses',
+    intro:
+      'We provide full-service window replacement, glass replacement, and custom installation by licensed window contractors serving Glen Burnie and nearby Maryland communities.',
+    keywords: [
+      'window replacement',
+      'replacement windows near me',
+      'window screen replacement',
+      'window glass replacement',
+      'window replacement cost',
+      'window installers near me',
+      'best replacement windows',
+      'vinyl replacement windows',
+      'window replacement companies',
+      'window replacement companies near me',
+      'window contractor near me',
+      'window contractor',
+      'replacement window contractor',
+      'windows installation service',
+      'professional window installers',
+      'window replacement service',
+      'window replacement Glen Burnie MD',
+      'window installation Glen Burnie MD',
+      'replacement windows Glen Burnie MD',
+      'window installers Glen Burnie MD',
+      'window replacement Anne Arundel County MD',
+      'energy efficient windows Glen Burnie MD',
+      'vinyl windows Glen Burnie MD',
+    ],
+  },
+  'siding-gutters': {
+    title: 'Siding and Gutter Contractors in Glen Burnie, MD | Installation & Repair',
+    description:
+      'Local siding and gutter contractors in Glen Burnie, MD for siding installation, siding replacement, gutter repair, gutter replacement, gutter cleaning, and gutter guards.',
+    headline: 'Siding and Gutter Installation, Replacement, and Repair',
+    intro:
+      'Protect your home exterior with professional siding services and seamless gutter solutions, including repairs, replacement, and long-term moisture management.',
+    keywords: [
+      'siding contractors',
+      'siding contractors near me',
+      'siding companies',
+      'siding installation',
+      'siding replacement',
+      'siding installation cost',
+      'gutter installation',
+      'gutter replacement',
+      'gutter repair',
+      'gutter cleaning',
+      'gutter guards',
+      'siding replacement cost',
+      'siding installation services',
+      'siding replacement services',
+      'siding contractor Glen Burnie MD',
+      'siding repair Glen Burnie MD',
+      'vinyl siding Glen Burnie MD',
+      'residential siding Glen Burnie',
+      'gutter repair Glen Burnie MD',
+      'house siding contractors MD',
+    ],
+  },
+  'kitchen-bath': {
+    title: 'Kitchen and Bathroom Remodeling in Glen Burnie, MD | Remodel Contractors',
+    description:
+      'Kitchen remodeling and bathroom remodel services in Glen Burnie, MD. Work with trusted remodel contractors for full kitchen renovation, bathroom renovation, and design-build upgrades.',
+    headline: 'Kitchen Remodeling and Bathroom Remodel Services',
+    intro:
+      'From layout planning to finishing details, our remodeling contractors manage kitchen and bath renovations with clear timelines, quality craftsmanship, and code-compliant installation.',
+    keywords: [
+      'bathroom remodel',
+      'bathroom renovation',
+      'bathroom remodeling',
+      'bathroom renovation cost',
+      'kitchen remodeling',
+      'kitchen renovation',
+      'kitchen remodel',
+      'kitchen remodel cost',
+      'kitchen renovation cost',
+      'kitchen remodeling services',
+      'bathroom remodelers',
+      'kitchen remodeling contractor',
+      'kitchen cabinets installation',
+      'bathroom renovation contractor',
+      'bathroom remodel Glen Burnie MD',
+      'kitchen and bath remodeling Glen Burnie MD',
+      'bathroom remodeling Glen Burnie MD',
+      'kitchen remodeling Glen Burnie MD',
+      'bathroom remodeler Glen Burnie MD',
+      'kitchen remodeler Glen Burnie MD',
+      'remodeling contractor Glen Burnie MD',
+      'home remodeling Glen Burnie MD',
+    ],
+  },
+  'home-additions': {
+    title: 'Home Additions in Glen Burnie, MD | Room Additions and House Extensions',
+    description:
+      'Experienced home addition contractors in Glen Burnie, MD for room additions, home extensions, second-story additions, and full-service expansion projects.',
+    headline: 'Home Addition Contractors for Room Additions and Extensions',
+    intro:
+      'Our general contractor team plans and builds home additions that blend with your existing structure, from foundation and framing through finishes and final inspections.',
+    keywords: [
+      'home additions',
+      'home addition contractors',
+      'room addition cost',
+      'house extension',
+      'house extension cost',
+      'home extension',
+      'home addition service',
+      'home improvement services',
+      'home remodeling near me',
+      'home remodeling services',
+      'home addition Glen Burnie MD',
+      'room addition Glen Burnie MD',
+      'second story addition Glen Burnie MD',
+      'home additions Anne Arundel County MD',
+      'general contractor for home addition',
+      'home addition financing',
+      'home addition contractor near me',
+    ],
+  },
+  'decks-patios': {
+    title: 'Deck Builder in Glen Burnie, MD | Deck and Patio Installation',
+    description:
+      'Local deck builders and patio contractors in Glen Burnie, MD for deck construction, deck repair, deck replacement, and patio installation services.',
+    headline: 'Deck Builders and Patio Contractors for Outdoor Living Projects',
+    intro:
+      'We design and build durable outdoor decks and patios with structural precision, attractive finishes, and low-maintenance materials for year-round use.',
+    keywords: [
+      'deck builder',
+      'deck builders near me',
+      'deck contractors near me',
+      'deck repair',
+      'deck companies near me',
+      'deck construction',
+      'deck replacement',
+      'deck installation',
+      'deck installation near me',
+      'patio repair',
+      'deck building company',
+      'deck building companies',
+      'deck installation services',
+      'local deck builder',
+      'local deck builders near me',
+      'patio installation',
+      'patio installation near me',
+      'deck builder Glen Burnie MD',
+      'deck installation Glen Burnie MD',
+      'deck repair Glen Burnie MD',
+      'patio contractor Glen Burnie MD',
+      'deck builder Anne Arundel County MD',
+      'deck and patio builder near me',
+    ],
+  },
+  'emergency-services': {
+    title: 'Emergency Restoration Services in Glen Burnie, MD | 24/7 Home Repair',
+    description:
+      '24/7 emergency services in Glen Burnie, MD for water damage restoration, flood cleanup, fire damage restoration, storm damage repair, and emergency roof repairs.',
+    headline: '24/7 Emergency Restoration and Storm Damage Repair Services',
+    intro:
+      'When urgent property damage happens, our team provides immediate stabilization, emergency roof repair, water removal, and restoration planning with insurance-ready documentation.',
+    keywords: [
+      'emergency water restoration',
+      'flood restoration companies',
+      'emergency flood cleanup near me',
+      '24/7 fire damage repair',
+      'storm damage restoration near me',
+      'flood damage restoration',
+      'storm damage restoration',
+      'water damage services',
+      'water damage restoration',
+      'fire damage restoration',
+      'fire restoration services',
+      'storm damage services',
+      'emergency roof repairs',
+      '24 hour emergency roof repair',
+      '24 hour emergency roof repair near me',
+      'emergency roofers',
+      'emergency roof replacement',
+      'storm damage repair contractors',
+      'emergency services Glen Burnie MD',
+      'water damage restoration Glen Burnie MD',
+      'flood cleanup Glen Burnie MD',
+      'fire damage restoration Glen Burnie MD',
+      'smoke damage cleanup Glen Burnie MD',
+      'storm damage repair Glen Burnie MD',
+      'emergency water removal Glen Burnie MD',
+      'emergency restoration company near me',
+      'emergency roof repair Glen Burnie',
+      '24/7 home repair services Glen Burnie',
+      'emergency siding repair near me',
+      'storm damage roofing Glen Burnie',
+      'emergency gutter repair Glen Burnie',
+      'storm damage home repair near me',
+      'emergency home services Glen Burnie MD',
+    ],
+  },
+}
+
 export const serviceDetails = {
   roofing: {
     hero: 'Roof replacements and repairs that protect your home or facility year-round.',
@@ -320,6 +594,112 @@ export const processSteps = [
     description: 'We confirm quality, review warranties, and close out the project.',
   },
 ]
+
+type FaqItem = {
+  question: string
+  answer: string
+}
+
+export const serviceFaqs: Partial<Record<ServiceCategorySlug, FaqItem[]>> = {
+  roofing: [
+    {
+      question: 'Do you provide roof repair and roof replacement in Glen Burnie, MD?',
+      answer: 'Yes. We provide roof repair, roof replacement, and full roofing installation for homes and commercial properties across Glen Burnie and Anne Arundel County.',
+    },
+    {
+      question: 'How fast can you respond to emergency roof repair?',
+      answer: 'Our emergency team is available 24/7 for urgent roof leak repair, storm damage tarping, and rapid stabilization to prevent further interior damage.',
+    },
+    {
+      question: 'Do your roofing contractors work with insurance claims?',
+      answer: 'Yes. We document storm and leak damage, provide inspection reports, and coordinate with adjusters to keep the claim and repair process moving.',
+    },
+  ],
+  windows: [
+    {
+      question: 'Do you offer full window replacement and installation services?',
+      answer: 'Yes. Our window contractors handle replacement windows, new window installation, and window glass replacement with energy-efficient options.',
+    },
+    {
+      question: 'Can you help me choose the best replacement windows for my home?',
+      answer: 'Yes. We review performance, style, insulation value, and budget so you can choose the best replacement windows for your property goals.',
+    },
+    {
+      question: 'Do you install windows in Glen Burnie and nearby areas?',
+      answer: 'We install windows in Glen Burnie, Anne Arundel County, and surrounding Maryland communities for both residential and commercial projects.',
+    },
+  ],
+  'siding-gutters': [
+    {
+      question: 'What siding and gutter services do you provide?',
+      answer: 'We provide siding installation, siding replacement, siding repair, gutter installation, gutter replacement, and gutter repair for long-term exterior protection.',
+    },
+    {
+      question: 'Do you install gutter guards and perform gutter cleaning?',
+      answer: 'Yes. We install gutter guards and can recommend maintenance schedules to reduce overflow risk, clogs, and moisture-related exterior damage.',
+    },
+    {
+      question: 'Can you match existing vinyl siding during repairs?',
+      answer: 'In many cases, yes. We source matching materials and coordinate repairs to preserve curb appeal while restoring weather resistance.',
+    },
+  ],
+  'kitchen-bath': [
+    {
+      question: 'Do you handle complete kitchen remodeling and bathroom remodel projects?',
+      answer: 'Yes. We manage kitchen and bathroom remodeling from planning and permits through installation, finishes, and final walkthrough.',
+    },
+    {
+      question: 'Can you provide budget guidance for kitchen or bathroom renovation costs?',
+      answer: 'Yes. We provide clear estimates with options by scope, materials, and timeline so you can align your remodel with your budget goals.',
+    },
+    {
+      question: 'Do you offer design-build remodeling in Glen Burnie, MD?',
+      answer: 'Yes. Our team offers design-build coordination for kitchen and bath renovations in Glen Burnie and nearby Maryland service areas.',
+    },
+  ],
+  'home-additions': [
+    {
+      question: 'What types of home additions do you build?',
+      answer: 'We build room additions, second-story additions, and home extensions, including structural framing, exterior integration, and interior finishing.',
+    },
+    {
+      question: 'Do you manage permits and inspections for home additions?',
+      answer: 'Yes. We coordinate permitting and inspections so your home addition project stays code-compliant and on schedule.',
+    },
+    {
+      question: 'Can I finance a home addition project?',
+      answer: 'Financing may be available for qualified homeowners, and we can guide you through current options during your estimate consultation.',
+    },
+  ],
+  'decks-patios': [
+    {
+      question: 'Do you provide deck construction, deck repair, and deck replacement?',
+      answer: 'Yes. Our deck builders handle new deck construction, deck installation, repairs, and full replacement with wood or composite systems.',
+    },
+    {
+      question: 'Do you also build patios and outdoor living spaces?',
+      answer: 'Yes. We build patios, stairs, railings, and related outdoor features to create durable, functional spaces for year-round use.',
+    },
+    {
+      question: 'Do you serve Glen Burnie for deck and patio projects?',
+      answer: 'Yes. We complete deck and patio projects in Glen Burnie, Anne Arundel County, and surrounding Maryland communities.',
+    },
+  ],
+  'emergency-services': [
+    {
+      question: 'What emergency services do you provide 24/7?',
+      answer: 'We provide emergency roof repairs, tarping, board-up, water removal, flood cleanup, storm stabilization, and fire or smoke damage response.',
+    },
+    {
+      question: 'Do you offer water damage restoration and flood cleanup in Glen Burnie, MD?',
+      answer: 'Yes. We provide rapid water damage restoration and emergency flood cleanup in Glen Burnie, including extraction, drying, and repair planning.',
+    },
+    {
+      question: 'Can your emergency restoration team support insurance documentation?',
+      answer: 'Yes. We document property damage with photos and scope details to support adjuster communication and claims processing.',
+    },
+  ],
+}
 
 export const faqs = [
   {
