@@ -26,8 +26,6 @@ const nextConfig = {
       },
     ],
     unoptimized: true,
-    loader: 'custom',
-    loaderFile: './src/lib/imageLoader.ts',
   },
 }
 
