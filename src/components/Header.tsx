@@ -4,9 +4,15 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { FiChevronDown, FiClock, FiMenu, FiPhone, FiShield, FiX } from 'react-icons/fi'
-import { siteInfo } from '@/data/siteData'
 
-const Header = () => {
+type HeaderProps = {
+  siteInfo: {
+    phone: string
+    phoneDigits: string
+  }
+}
+
+const Header = ({ siteInfo }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [openSection, setOpenSection] = useState<string | null>(null)
 

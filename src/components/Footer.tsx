@@ -2,9 +2,26 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { FiMail, FiMapPin, FiPhone } from 'react-icons/fi'
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaYoutube } from 'react-icons/fa'
-import { siteInfo } from '@/data/siteData'
 
-const Footer = () => {
+type FooterProps = {
+  siteInfo: {
+    name: string
+    email: string
+    phone: string
+    phoneDigits: string
+    address: string
+    hours: string
+    serviceArea?: string
+    social: {
+      facebook: string
+      instagram: string
+      linkedin: string
+      youtube: string
+    }
+  }
+}
+
+const Footer = ({ siteInfo }: FooterProps) => {
   const currentYear = new Date().getFullYear()
 
   return (
@@ -51,7 +68,7 @@ const Footer = () => {
 
           <div>
             <h4 className="text-white font-semibold mb-4">Service Coverage</h4>
-            <p className="text-slate-400">Glen Burnie, MD and surrounding Maryland / DMV communities.</p>
+            <p className="text-slate-400">{siteInfo.serviceArea || 'Glen Burnie, MD and surrounding Maryland / DMV communities.'}</p>
             <div className="mt-4 flex flex-wrap gap-2 text-xs">
               <span className="bg-slate-900 border border-slate-800 px-3 py-1 rounded-full text-slate-300">Anne Arundel</span>
               <span className="bg-slate-900 border border-slate-800 px-3 py-1 rounded-full text-slate-300">Prince George&apos;s</span>

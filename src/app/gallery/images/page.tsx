@@ -1,13 +1,27 @@
 import { Metadata } from 'next'
 import CTASection from '@/components/CTASection'
 import InteractiveGalleryGrid from '@/components/InteractiveGalleryGrid'
+import { interactiveGalleryImages } from '@/data/enhancements'
+import { getGalleryCmsContent } from '@/lib/sanity/content'
 
 export const metadata: Metadata = {
   title: 'Image Gallery',
   description: 'Browse recent roofing, remodeling, and restoration projects across Maryland.',
 }
 
-const ImageGalleryPage = () => {
+const ImageGalleryPage = async () => {
+  const cmsGallery = await getGalleryCmsContent()
+  const galleryItems = (cmsGallery || [])
+    .filter((item) => item.category && item.location && (item.imageUrl || item.sourcePath))
+    .map((item) => ({
+      src: (item.sourcePath || item.imageUrl) as string,
+      alt: item.alt || item.title || 'Gallery image',
+      category: item.category as string,
+      location: item.location as string,
+    }))
+
+  const images = galleryItems.length > 0 ? galleryItems : interactiveGalleryImages
+
   return (
     <>
       <section className="bg-slate-900 text-white py-16">
@@ -22,7 +36,7 @@ const ImageGalleryPage = () => {
 
       <section className="py-16 bg-white">
         <div className="container-custom">
-          <InteractiveGalleryGrid />
+          <InteractiveGalleryGrid images={images} />
         </div>
       </section>
 

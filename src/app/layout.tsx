@@ -5,6 +5,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Script from 'next/script'
 import { siteInfo } from '@/data/siteData'
+import { getSiteSettingsCmsContent } from '@/lib/sanity/content'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' })
 const sora = Sora({ subsets: ['latin'], variable: '--font-sora' })
@@ -78,60 +79,73 @@ export const metadata: Metadata = {
   verification: {},
 }
 
-const schemaData = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: siteInfo.name,
-  image: 'https://housetransformersinc.com/images/logo-default-191x55.png',
-  '@id': 'https://housetransformersinc.com',
-  url: 'https://housetransformersinc.com',
-  telephone: siteInfo.phoneDigits,
-  email: siteInfo.email,
-  priceRange: '$$',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: '7442 Baltimore Annapolis Blvd Suite 201',
-    addressLocality: 'Glen Burnie',
-    addressRegion: 'MD',
-    postalCode: '21061',
-    addressCountry: 'US',
-  },
-  openingHoursSpecification: [
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      opens: '08:00',
-      closes: '16:00',
-    },
-  ],
-  areaServed: ['Glen Burnie, MD', 'Anne Arundel County', 'Maryland', 'DMV Metro'],
-  serviceType: [
-    'Roofing',
-    'Siding',
-    'Windows',
-    'Kitchen Remodeling',
-    'Bathroom Remodeling',
-    'Home Additions',
-    'Decks & Patios',
-    'Emergency Services',
-    'Water Damage Restoration',
-    'Fire & Smoke Damage Restoration',
-    'Storm Damage Repair',
-  ],
-  sameAs: [
-    siteInfo.social.facebook,
-    siteInfo.social.instagram,
-    siteInfo.social.linkedin,
-    siteInfo.social.youtube,
-    siteInfo.social.yelp,
-  ],
-}
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const cmsSettings = await getSiteSettingsCmsContent()
+  const mergedSiteInfo = {
+    ...siteInfo,
+    name: cmsSettings?.companyName || siteInfo.name,
+    tagline: cmsSettings?.tagline || siteInfo.tagline,
+    phone: cmsSettings?.phone || siteInfo.phone,
+    phoneDigits: cmsSettings?.phoneDigits || siteInfo.phoneDigits,
+    email: cmsSettings?.email || siteInfo.email,
+    address: cmsSettings?.address || siteInfo.address,
+    hours: cmsSettings?.hours || siteInfo.hours,
+    serviceArea: cmsSettings?.serviceArea || siteInfo.serviceArea,
+  }
+
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: mergedSiteInfo.name,
+    image: 'https://housetransformersinc.com/images/logo-default-191x55.png',
+    '@id': 'https://housetransformersinc.com',
+    url: 'https://housetransformersinc.com',
+    telephone: mergedSiteInfo.phoneDigits,
+    email: mergedSiteInfo.email,
+    priceRange: '$$',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '7442 Baltimore Annapolis Blvd Suite 201',
+      addressLocality: 'Glen Burnie',
+      addressRegion: 'MD',
+      postalCode: '21061',
+      addressCountry: 'US',
+    },
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        opens: '08:00',
+        closes: '16:00',
+      },
+    ],
+    areaServed: ['Glen Burnie, MD', 'Anne Arundel County', 'Maryland', 'DMV Metro'],
+    serviceType: [
+      'Roofing',
+      'Siding',
+      'Windows',
+      'Kitchen Remodeling',
+      'Bathroom Remodeling',
+      'Home Additions',
+      'Decks & Patios',
+      'Emergency Services',
+      'Water Damage Restoration',
+      'Fire & Smoke Damage Restoration',
+      'Storm Damage Repair',
+    ],
+    sameAs: [
+      siteInfo.social.facebook,
+      siteInfo.social.instagram,
+      siteInfo.social.linkedin,
+      siteInfo.social.youtube,
+      siteInfo.social.yelp,
+    ],
+  }
+
   return (
     <html lang="en" className={`${manrope.variable} ${sora.variable}`}>
       <body className={manrope.className}>
@@ -142,9 +156,9 @@ export default function RootLayout({
             __html: JSON.stringify(schemaData),
           }}
         />
-        <Header />
+        <Header siteInfo={{ phone: mergedSiteInfo.phone, phoneDigits: mergedSiteInfo.phoneDigits }} />
         <main className="min-h-screen">{children}</main>
-        <Footer />
+        <Footer siteInfo={mergedSiteInfo} />
       </body>
     </html>
   )

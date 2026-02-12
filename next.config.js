@@ -1,12 +1,15 @@
 /** @type {import('next').NextConfig} */
-const isProd = process.env.NODE_ENV === 'production'
+const isStaticExport = process.env.STATIC_EXPORT === 'true'
+
+const configuredBasePath = (process.env.NEXT_PUBLIC_BASE_PATH || '').trim()
+const normalizedBasePath = configuredBasePath
+  ? `/${configuredBasePath.replace(/^\/+|\/+$/g, '')}`
+  : ''
 
 const nextConfig = {
   reactStrictMode: true,
-  output: 'export',
-  basePath: isProd ? '/test' : '',
-  assetPrefix: isProd ? '/test/' : '',
-  trailingSlash: true,
+  ...(isStaticExport ? { output: 'export', trailingSlash: true } : {}),
+  ...(normalizedBasePath ? { basePath: normalizedBasePath, assetPrefix: `${normalizedBasePath}/` } : {}),
   images: {
     remotePatterns: [
       {
@@ -24,8 +27,14 @@ const nextConfig = {
         hostname: 'placehold.co',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+        pathname: '/**',
+      },
     ],
-    unoptimized: true,
+    // Keep native optimization off only for static export mode.
+    unoptimized: isStaticExport,
   },
 }
 

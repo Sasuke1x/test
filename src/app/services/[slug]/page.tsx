@@ -8,6 +8,7 @@ import CTASection from '@/components/CTASection'
 import LeadForm from '@/components/LeadForm'
 import { interactiveGalleryImages, serviceLegacyContent, type ServiceSlug } from '@/data/enhancements'
 import { processSteps, serviceCategories, serviceDetails, serviceFaqs, serviceSeoProfiles, siteInfo } from '@/data/siteData'
+import { getServiceCmsContent } from '@/lib/sanity/content'
 
 interface PageProps {
   params: { slug: string }
@@ -16,15 +17,19 @@ interface PageProps {
 export const generateStaticParams = () =>
   serviceCategories.map((service) => ({ slug: service.slug }))
 
-export const generateMetadata = ({ params }: PageProps): Metadata => {
+export const generateMetadata = async ({ params }: PageProps): Promise<Metadata> => {
   const service = serviceCategories.find((item) => item.slug === params.slug)
   if (!service) {
     return { title: 'Service Not Found' }
   }
+  const cmsService = await getServiceCmsContent(params.slug)
   const seoProfile = serviceSeoProfiles[service.slug]
-  const title = seoProfile?.title ?? `${service.title} in Glen Burnie, MD`
-  const description = seoProfile?.description ?? service.description
-  const keywords = seoProfile?.keywords ? [...seoProfile.keywords] : [service.title, 'Glen Burnie MD']
+  const title = cmsService?.seo?.metaTitle || seoProfile?.title || `${service.title} in Glen Burnie, MD`
+  const description = cmsService?.seo?.metaDescription || seoProfile?.description || service.description
+  const keywords = cmsService?.seo?.keywords?.length
+    ? cmsService.seo.keywords
+    : seoProfile?.keywords ? [...seoProfile.keywords] : [service.title, 'Glen Burnie MD']
+  const ogImage = cmsService?.seo?.ogImageUrl || service.image
 
   return {
     title,
@@ -40,7 +45,7 @@ export const generateMetadata = ({ params }: PageProps): Metadata => {
       type: 'article',
       images: [
         {
-          url: service.image,
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: title,
@@ -51,12 +56,12 @@ export const generateMetadata = ({ params }: PageProps): Metadata => {
       card: 'summary_large_image',
       title,
       description,
-      images: [service.image],
+      images: [ogImage],
     },
   }
 }
 
-const ServiceDetailPage = ({ params }: PageProps) => {
+const ServiceDetailPage = async ({ params }: PageProps) => {
   const service = serviceCategories.find((item) => item.slug === params.slug)
   const detail = service ? serviceDetails[service.slug as keyof typeof serviceDetails] : null
 
@@ -69,13 +74,21 @@ const ServiceDetailPage = ({ params }: PageProps) => {
   const heroImage = interactiveGalleryImages.find((image) => image.serviceSlugs.includes(serviceSlug))?.src ?? service.image
   const gallery = interactiveGalleryImages.filter((image) => image.serviceSlugs.includes(serviceSlug)).slice(0, 6)
   const projectGallery = gallery.length > 0 ? gallery : interactiveGalleryImages.slice(0, 6)
+  const cmsService = await getServiceCmsContent(service.slug)
   const seoProfile = serviceSeoProfiles[service.slug]
-  const faqItems = serviceFaqs[service.slug] ?? []
+  const faqItems = (cmsService?.faqs?.filter((item) => item?.question && item?.answer).map((item) => ({
+    question: item.question as string,
+    answer: item.answer as string,
+  }))) || serviceFaqs[service.slug] || []
+  const headline = cmsService?.seoHeadline || seoProfile?.headline || service.title
+  const heroIntro = cmsService?.heroIntro || seoProfile?.intro
+  const ctaPrimary = cmsService?.ctaPrimary || 'Call for Same-Day Service'
+  const ctaSecondary = cmsService?.ctaSecondary || 'Get Free Estimate'
 
   const serviceSchema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    name: seoProfile?.title ?? `${service.title} Services`,
+    name: cmsService?.seo?.metaTitle || seoProfile?.title || `${service.title} Services`,
     serviceType: service.title,
     areaServed: ['Glen Burnie, MD', 'Anne Arundel County, MD', 'Maryland'],
     provider: {
@@ -92,7 +105,7 @@ const ServiceDetailPage = ({ params }: PageProps) => {
       },
     },
     url: `https://housetransformersinc.com/services/${service.slug}`,
-    description: seoProfile?.description ?? service.description,
+    description: cmsService?.seo?.metaDescription || seoProfile?.description || service.description,
   }
 
   const faqSchema = faqItems.length > 0
@@ -141,17 +154,17 @@ const ServiceDetailPage = ({ params }: PageProps) => {
         </div>
         <div className="container-custom relative z-10">
           <p className="text-sm font-semibold text-brand-300 uppercase tracking-widest">Service</p>
-          <h1 className="text-4xl md:text-5xl font-bold mt-4">{seoProfile?.headline ?? service.title}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mt-4">{headline}</h1>
           <p className="text-lg text-slate-200 mt-4 max-w-2xl">{detail.hero}</p>
-          {seoProfile?.intro && (
-            <p className="text-base text-slate-200/90 mt-3 max-w-3xl">{seoProfile.intro}</p>
+          {heroIntro && (
+            <p className="text-base text-slate-200/90 mt-3 max-w-3xl">{heroIntro}</p>
           )}
           <div className="mt-6 flex flex-wrap gap-4">
             <a href={`tel:${siteInfo.phoneDigits}`} className="btn-primary">
-              <FiPhone className="mr-2" /> Call for Same-Day Service
+              <FiPhone className="mr-2" /> {ctaPrimary}
             </a>
             <Link href="/contact" className="btn-secondary bg-transparent border-white text-white hover:bg-white hover:text-slate-900">
-              Get Free Estimate
+              {ctaSecondary}
             </Link>
           </div>
         </div>

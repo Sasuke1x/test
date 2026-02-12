@@ -2,23 +2,38 @@
 
 import { useMemo, useState } from 'react'
 import { FiX } from 'react-icons/fi'
-import { galleryCategories, interactiveGalleryImages, type GalleryCategory } from '@/data/enhancements'
+import { interactiveGalleryImages } from '@/data/enhancements'
 import { getAssetPath } from '@/lib/utils'
 
 const allCategory = 'All Projects'
 
-type FilterValue = GalleryCategory | typeof allCategory
+type GalleryItem = {
+  src: string
+  alt: string
+  category: string
+  location: string
+}
 
-const InteractiveGalleryGrid = () => {
+type FilterValue = string | typeof allCategory
+
+type InteractiveGalleryGridProps = {
+  images?: GalleryItem[]
+}
+
+const InteractiveGalleryGrid = ({ images = interactiveGalleryImages }: InteractiveGalleryGridProps) => {
   const [activeFilter, setActiveFilter] = useState<FilterValue>(allCategory)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const categories = useMemo(
+    () => Array.from(new Set(images.map((item) => item.category))),
+    [images],
+  )
 
   const filteredImages = useMemo(
     () =>
       activeFilter === allCategory
-        ? interactiveGalleryImages
-        : interactiveGalleryImages.filter((image) => image.category === activeFilter),
-    [activeFilter],
+        ? images
+        : images.filter((image) => image.category === activeFilter),
+    [activeFilter, images],
   )
 
   return (
@@ -35,7 +50,7 @@ const InteractiveGalleryGrid = () => {
         >
           {allCategory}
         </button>
-        {galleryCategories.map((category) => (
+        {categories.map((category) => (
           <button
             key={category}
             type="button"
@@ -60,7 +75,7 @@ const InteractiveGalleryGrid = () => {
             className="group relative h-64 rounded-2xl overflow-hidden shadow-sm text-left"
           >
             <img 
-              src={getAssetPath(image.src)} 
+              src={getAssetPath(image.src)}
               alt={image.alt} 
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
             />

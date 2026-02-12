@@ -1,22 +1,33 @@
-'use client'
-
 import { FiStar } from 'react-icons/fi'
 import Script from 'next/script'
 import { testimonials, siteInfo } from '@/data/siteData'
 
-const TestimonialsSection = () => {
+type TestimonialItem = {
+  name: string
+  location: string
+  rating: number
+  text: string
+  date: string
+}
+
+type TestimonialsSectionProps = {
+  testimonialsList?: TestimonialItem[]
+  businessName?: string
+}
+
+const TestimonialsSection = ({ testimonialsList = testimonials, businessName = siteInfo.name }: TestimonialsSectionProps) => {
   const aggregateRatingSchema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    name: siteInfo.name,
+    name: businessName,
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: '5.0',
-      reviewCount: testimonials.length.toString(),
+      reviewCount: testimonialsList.length.toString(),
       bestRating: '5',
       worstRating: '1',
     },
-    review: testimonials.map((testimonial) => ({
+    review: testimonialsList.map((testimonial) => ({
       '@type': 'Review',
       author: {
         '@type': 'Person',
@@ -49,7 +60,7 @@ const TestimonialsSection = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial) => (
+            {testimonialsList.map((testimonial) => (
               <div key={testimonial.name} className="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm">
                 <div className="flex items-center gap-1 text-yellow-400 mb-4">
                   {[...Array(5)].map((_, index) => (

@@ -10,40 +10,82 @@ import TestimonialsSection from '@/components/TestimonialsSection'
 import TrustBadges from '@/components/TrustBadges'
 import { interactiveGalleryImages } from '@/data/enhancements'
 import { homepageSeo, serviceCategories, siteInfo } from '@/data/siteData'
+import { getGalleryCmsContent, getHomepageCmsContent, getSiteSettingsCmsContent, getTestimonialsCmsContent } from '@/lib/sanity/content'
 
-export const metadata: Metadata = {
-  title: homepageSeo.title,
-  description: homepageSeo.description,
-  keywords: [...homepageSeo.keywords],
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    title: homepageSeo.title,
-    description: homepageSeo.description,
-    url: '/',
-    type: 'website',
-    images: [
-      {
-        url: '/brand/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'General contractor and home remodeling services in Glen Burnie, MD',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: homepageSeo.title,
-    description: homepageSeo.description,
-    images: ['/brand/og-image.jpg'],
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const homepage = await getHomepageCmsContent()
+  const title = homepage?.seo?.metaTitle || homepageSeo.title
+  const description = homepage?.seo?.metaDescription || homepageSeo.description
+  const keywords = homepage?.seo?.keywords?.length ? homepage.seo.keywords : [...homepageSeo.keywords]
+  const ogImage = homepage?.seo?.ogImageUrl || '/brand/og-image.jpg'
+
+  return {
+    title,
+    description,
+    keywords,
+    alternates: {
+      canonical: '/',
+    },
+    openGraph: {
+      title,
+      description,
+      url: '/',
+      type: 'website',
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: 'General contractor and home remodeling services in Glen Burnie, MD',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage],
+    },
+  }
 }
 
-const HomePage = () => {
+const HomePage = async () => {
   const remodelingServices = serviceCategories.filter((service) => service.type === 'remodeling')
   const restorationServices = serviceCategories.filter((service) => service.type === 'restoration')
-  const galleryTeaser = interactiveGalleryImages.slice(0, 3)
+  const galleryCms = await getGalleryCmsContent()
+  const homepage = await getHomepageCmsContent()
+  const siteSettings = await getSiteSettingsCmsContent()
+  const testimonialsCms = await getTestimonialsCmsContent()
+  const galleryTeaserCms = (galleryCms || [])
+    .filter((item) => item.location && item.alt && (item.sourcePath || item.imageUrl))
+    .slice(0, 3)
+    .map((item) => ({
+      src: (item.sourcePath || item.imageUrl) as string,
+      alt: item.alt as string,
+      location: item.location as string,
+    }))
+  const galleryTeaser = galleryTeaserCms.length > 0
+    ? galleryTeaserCms
+    : interactiveGalleryImages.slice(0, 3).map((item) => ({ src: item.src, alt: item.alt, location: item.location }))
+
+  const heroHeadline = homepage?.heroHeadline || 'Licensed General Contractor for Roofing, Remodeling, and Home Improvement'
+  const heroSubheadline = homepage?.heroSubheadline
+    || 'House Transformers Inc. provides home remodeling, kitchen remodeling, bathroom remodel, roofing, window replacement, siding, gutter, and deck building services in Glen Burnie, MD and Anne Arundel County.'
+  const localIntroHeading = homepage?.localIntroHeading || 'Home Improvement Contractors in Glen Burnie, MD'
+  const localIntroBody = homepage?.localIntroBody
+    || 'If you are looking for remodeling contractors near you, roofing companies near you, or licensed home services in Glen Burnie, our team delivers residential and commercial project management from inspection through completion.'
+  const trustedHeading = homepage?.trustedHeading || 'Award-winning craftsmanship backed by industry leaders'
+  const remodelingHeading = homepage?.remodelingHeading || 'Transform your home or facility with confidence'
+  const remodelingBody = homepage?.remodelingBody || 'From roofing to full remodels, our crews handle every detail with careful planning and premium materials.'
+  const emergencyHeading = homepage?.emergencyHeading || 'Water, fire, and storm damage response'
+  const emergencyBody = homepage?.emergencyBody || 'Our restoration teams respond quickly, secure your property, and guide you through insurance documentation. We restore residential and commercial spaces with precision.'
+  const testimonialItems = (testimonialsCms || []).filter((item) => item.name && item.location && item.text && item.rating).map((item) => ({
+    name: item.name as string,
+    location: item.location as string,
+    text: item.text as string,
+    rating: item.rating as number,
+    date: item.date || '',
+  }))
 
   const stats = [
     { label: 'Years Serving MD', value: '15+' },
@@ -79,10 +121,10 @@ const HomePage = () => {
             <div>
               <p className="text-sm font-semibold text-brand-300 uppercase tracking-widest">Glen Burnie, MD</p>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mt-3">
-                Licensed General Contractor for Roofing, Remodeling, and Home Improvement
+                {heroHeadline}
               </h1>
               <p className="text-lg md:text-xl text-slate-200 mt-4">
-                House Transformers Inc. provides home remodeling, kitchen remodeling, bathroom remodel, roofing, window replacement, siding, gutter, and deck building services in Glen Burnie, MD and Anne Arundel County.
+                {heroSubheadline}
               </p>
               <div className="flex flex-wrap items-center gap-4 mt-8">
                 <a href={`tel:${siteInfo.phoneDigits}`} className="btn-primary">
@@ -108,9 +150,9 @@ const HomePage = () => {
 
       <section className="py-10 bg-slate-50 border-y border-slate-200">
         <div className="container-custom">
-          <h2 className="text-2xl md:text-3xl font-bold text-slate-900">Home Improvement Contractors in Glen Burnie, MD</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-900">{localIntroHeading}</h2>
           <p className="text-slate-700 mt-3 max-w-4xl">
-            If you are looking for remodeling contractors near you, roofing companies near you, or licensed home services in Glen Burnie, our team delivers residential and commercial project management from inspection through completion.
+            {localIntroBody}
           </p>
         </div>
       </section>
@@ -119,7 +161,7 @@ const HomePage = () => {
         <div className="container-custom">
           <div className="text-center mb-8">
             <p className="text-sm font-semibold text-brand-600 uppercase tracking-wide">Trusted & Certified</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Award-winning craftsmanship backed by industry leaders</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900">{trustedHeading}</h2>
           </div>
           <TrustBadges />
         </div>
@@ -130,8 +172,8 @@ const HomePage = () => {
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
             <div>
               <p className="text-sm font-semibold text-brand-600 uppercase tracking-wide">Remodeling Services</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Transform your home or facility with confidence</h2>
-              <p className="text-slate-600 mt-3 max-w-2xl">From roofing to full remodels, our crews handle every detail with careful planning and premium materials.</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900">{remodelingHeading}</h2>
+              <p className="text-slate-600 mt-3 max-w-2xl">{remodelingBody}</p>
             </div>
             <Link href="/services" className="inline-flex items-center gap-2 text-brand-700 font-semibold">
               View all services <FiArrowRight />
@@ -158,8 +200,8 @@ const HomePage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 items-start">
             <div>
               <p className="text-sm font-semibold text-emergency-600 uppercase tracking-wide">Emergency Restoration</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Water, fire, and storm damage response</h2>
-              <p className="text-slate-600 mt-3">Our restoration teams respond quickly, secure your property, and guide you through insurance documentation. We restore residential and commercial spaces with precision.</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900">{emergencyHeading}</h2>
+              <p className="text-slate-600 mt-3">{emergencyBody}</p>
 
               <div className="mt-6 space-y-4">
                 {restorationServices.map((service) => (
@@ -297,7 +339,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      <TestimonialsSection />
+      <TestimonialsSection testimonialsList={testimonialItems.length > 0 ? testimonialItems : undefined} businessName={siteSettings?.companyName || siteInfo.name} />
       <FAQSection />
       <CTASection />
     </>
